@@ -1,0 +1,68 @@
+CREATE TABLE IF NOT EXISTS users (
+user_id SERIAL PRIMARY KEY,
+user_uuid UUID NOT NULL,
+team_uuid UUID,
+user_name VARCHAR(100) NOT NULL,
+user_email VARCHAR(150) UNIQUE NOT NULL,
+role VARCHAR(50) NOT NULL,
+is_active BOOLEAN DEFAULT TRUE,
+updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_by UUID,
+created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+created_by UUID
+);
+
+CREATE TABLE clients (
+client_id SERIAL PRIMARY KEY,
+client_uuid UUID NOT NULL UNIQUE,
+name TEXT NOT NULL,
+contact_email TEXT,
+contact_phone TEXT,
+address TEXT,
+is_active BOOLEAN DEFAULT TRUE,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE drivers (
+driver_id SERIAL PRIMARY KEY,
+driver_uuid UUID NOT NULL UNIQUE,
+name TEXT NOT NULL,
+phone_number TEXT,
+license_number TEXT,
+is_active BOOLEAN DEFAULT TRUE,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE trucks (
+truck_id SERIAL PRIMARY KEY,
+truck_uuid UUID NOT NULL UNIQUE,
+name TEXT NOT NULL,
+type TEXT,
+capacity INTEGER,
+is_active BOOLEAN DEFAULT TRUE,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE trips (
+trip_id SERIAL PRIMARY KEY,
+trip_uuid UUID NOT NULL UNIQUE,
+truck_id INTEGER REFERENCES trucks(truck_id) ON DELETE CASCADE,
+driver_id INTEGER REFERENCES drivers(driver_id) ON DELETE CASCADE,
+client_id INTEGER REFERENCES clients(client_id) ON DELETE CASCADE,
+trip_date DATE NOT NULL,
+start_location TEXT,
+end_location TEXT,
+revenue NUMERIC(10, 2),
+expenses NUMERIC(10, 2),
+notes TEXT,
+is_active BOOLEAN DEFAULT TRUE,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE trip_expenses (
+expense_id SERIAL PRIMARY KEY,
+trip_id INTEGER REFERENCES trips(trip_id) ON DELETE CASCADE,
+description TEXT,
+amount NUMERIC(10, 2),
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

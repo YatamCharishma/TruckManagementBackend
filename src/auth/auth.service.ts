@@ -14,7 +14,7 @@ export class AuthService {
     const user = await this.userService.getUserData(email);
     const match = await bcrypt.compare(pass, user.password_hash);
     console.log('idddi', match, user.password_hash, pass);
-    console.log(await bcrypt.hash(user.password_hash, 10));
+    console.log(await bcrypt.hash("aws123", 10));
     return match ? user : null;
   }
 

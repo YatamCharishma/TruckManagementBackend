@@ -1,72 +1,3 @@
-CREATE TABLE IF NOT EXISTS users (
-user_id SERIAL PRIMARY KEY,
-user_uuid UUID NOT NULL,
-team_uuid UUID,
-user_name VARCHAR(100) NOT NULL,
-user_email VARCHAR(150) UNIQUE NOT NULL,
-role VARCHAR(50) NOT NULL,
-is_active BOOLEAN DEFAULT TRUE,
-updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-updated_by UUID,
-created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-created_by UUID
-);
-
-CREATE TABLE clients (
-client_id SERIAL PRIMARY KEY,
-client_uuid UUID NOT NULL UNIQUE,
-name TEXT NOT NULL,
-contact_email TEXT,
-contact_phone TEXT,
-address TEXT,
-is_active BOOLEAN DEFAULT TRUE,
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE drivers (
-driver_id SERIAL PRIMARY KEY,
-driver_uuid UUID NOT NULL UNIQUE,
-name TEXT NOT NULL,
-phone_number TEXT,
-license_number TEXT,
-is_active BOOLEAN DEFAULT TRUE,
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE trucks (
-truck_id SERIAL PRIMARY KEY,
-truck_uuid UUID NOT NULL UNIQUE,
-name TEXT NOT NULL,
-type TEXT,
-capacity INTEGER,
-is_active BOOLEAN DEFAULT TRUE,
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE trips (
-trip_id SERIAL PRIMARY KEY,
-trip_uuid UUID NOT NULL UNIQUE,
-truck_id INTEGER REFERENCES trucks(truck_id) ON DELETE CASCADE,
-driver_id INTEGER REFERENCES drivers(driver_id) ON DELETE CASCADE,
-client_id INTEGER REFERENCES clients(client_id) ON DELETE CASCADE,
-trip_date DATE NOT NULL,
-start_location TEXT,
-end_location TEXT,
-revenue NUMERIC(10, 2),
-expenses NUMERIC(10, 2),
-notes TEXT,
-is_active BOOLEAN DEFAULT TRUE,
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE trip_expenses (
-expense_id SERIAL PRIMARY KEY,
-trip_id INTEGER REFERENCES trips(trip_id) ON DELETE CASCADE,
-description TEXT,
-amount NUMERIC(10, 2),
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
 INSERT INTO users (
 user_uuid,
 team_uuid,
@@ -119,6 +50,7 @@ gen_random_uuid(),
 gen_random_uuid()
 );
 
+
 INSERT INTO clients (
 client_uuid, name, contact_email, contact_phone, address, is_active, created_at
 ) VALUES
@@ -132,6 +64,7 @@ client_uuid, name, contact_email, contact_phone, address, is_active, created_at
 ('10000000-0000-0000-0000-000000000008', 'Moverly', 'info@moverly.com', '9500789345', 'Ahmedabad', TRUE, NOW()),
 ('10000000-0000-0000-0000-000000000009', 'HaulPro', 'hauls@pro.com', '9400667788', 'Surat', TRUE, NOW()),
 ('10000000-0000-0000-0000-000000000010', 'CargoConnect', 'connect@cargo.com', '9300233445', 'Jaipur', TRUE, NOW());
+
 
 INSERT INTO drivers (
 driver_uuid, name, phone_number, license_number, is_active, created_at
@@ -147,6 +80,7 @@ driver_uuid, name, phone_number, license_number, is_active, created_at
 ('20000000-0000-0000-0000-000000000009', 'Kiran Babu', '8888888889', 'RJ5566778', TRUE, NOW()),
 ('20000000-0000-0000-0000-000000000010', 'Anil Kaur', '8888888890', 'PB6677889', TRUE, NOW());
 
+
 INSERT INTO trucks (
 truck_uuid, name, type, capacity, is_active, created_at
 ) VALUES
@@ -161,6 +95,7 @@ truck_uuid, name, type, capacity, is_active, created_at
 ('30000000-0000-0000-0000-000000000009', 'Volvo FMX', 'Heavy', 8000, TRUE, NOW()),
 ('30000000-0000-0000-0000-000000000010', 'Force Traveller', 'Mini', 1200, TRUE, NOW());
 
+
 INSERT INTO trips (
 trip_uuid, truck_id, driver_id, client_id, trip_date, start_location, end_location, revenue, expenses, notes, is_active, created_at
 ) VALUES
@@ -174,6 +109,7 @@ trip_uuid, truck_id, driver_id, client_id, trip_date, start_location, end_locati
 ('40000000-0000-0000-0000-000000000008', 8, 8, 8, '2025-07-08', 'Surat', 'Nashik', 11000, 1600, 'Fast delivery', TRUE, NOW()),
 ('40000000-0000-0000-0000-000000000009', 9, 9, 9, '2025-07-09', 'Jaipur', 'Delhi', 19000, 2300, 'Long trip', TRUE, NOW()),
 ('40000000-0000-0000-0000-000000000010', 10, 10, 10, '2025-07-10', 'Mumbai', 'Goa', 20000, 3000, 'Weekend traffic', TRUE, NOW());
+
 
 INSERT INTO trip_expenses (
 trip_id, description, amount, created_at
