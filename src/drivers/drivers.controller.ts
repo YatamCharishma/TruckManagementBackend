@@ -1,8 +1,12 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { DriverService } from 'src/drivers/drivers.service';
+import { RolesGuard } from 'src/roles/roles.guard';
 import { createSuccess, ErrorException } from 'src/utils/response.handler';
 
 @Controller('drivers')
+@UseGuards(JwtAuthGuard, RolesGuard)
+
 export class DriverController {
   constructor(private readonly driverService: DriverService) {}
 

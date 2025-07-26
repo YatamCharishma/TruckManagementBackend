@@ -12,6 +12,7 @@ export class AuthService {
 
   async validateUser(email: string, pass: string) {
     const user = await this.userService.getUserData(email);
+    console.log('JWT_SECRET at runtime:', process.env.JWT_SECRET);
     const match = await bcrypt.compare(pass, user.password_hash);
     console.log('idddi', match, user.password_hash, pass);
     console.log(await bcrypt.hash("aws123", 10));

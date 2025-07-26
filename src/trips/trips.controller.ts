@@ -6,11 +6,17 @@ import {
   Param,
   Put,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { TripService } from './trips.service';
 import { createSuccess, ErrorException } from 'src/utils/response.handler';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/roles/roles.guard';
+import { Roles } from 'src/roles/roles.decorator';
 
 @Controller('trips')
+@UseGuards(JwtAuthGuard, RolesGuard)
+
 export class TripController {
   constructor(private readonly tripService: TripService) {}
 
@@ -27,6 +33,7 @@ export class TripController {
     }
   }
 
+  @Roles('Admin', 'Staff')
   @Post()
   async createTrip(@Body() trip: any) {
     try {

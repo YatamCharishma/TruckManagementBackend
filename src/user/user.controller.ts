@@ -16,11 +16,12 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/roles/roles.guard';
 
 @Controller('user')
+@UseGuards(JwtAuthGuard, RolesGuard)
+
 export class UserController {
   constructor(private userInfoService: UserService) {}
 
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Roles('Admin')
+  @Roles('Admin')
   @Get('/all-users-info')
   async getAllUsersInfo(req: Request, res: Response) {
     try {
@@ -37,6 +38,7 @@ export class UserController {
     }
   }
 
+  @Roles('Admin', 'Staff')
   @Put('/update-user-info')
   async updateUserInfo(@Body() userData: any) {
     try {
@@ -54,6 +56,7 @@ export class UserController {
     }
   }
 
+  @Roles('Admin')
   @Delete('/delete-user-info/:user_email')
   async deleteUserInfo(@Param('user_email') userEmail: string) {
     try {
@@ -69,7 +72,7 @@ export class UserController {
       );
     }
   }
-
+  @Roles('Admin')
   @Post('/add-user')
   async addUser(@Body() userData: any) {
     try {

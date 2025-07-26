@@ -1,8 +1,13 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Roles } from 'src/roles/roles.decorator';
+import { RolesGuard } from 'src/roles/roles.guard';
 import { TruckService } from 'src/trucks/trucks.service';
 import { createSuccess, ErrorException } from 'src/utils/response.handler';
 
 @Controller('trucks')
+@UseGuards(JwtAuthGuard, RolesGuard)
+
 export class TruckController {
   constructor(private readonly truckService: TruckService) {}
 
@@ -46,7 +51,8 @@ export class TruckController {
       );
     }
   }
-
+  
+  @Roles('Admin')
   @Delete(':truckId')
   async deactivateTruck(@Param('truckId') truckId: number) {
     try {

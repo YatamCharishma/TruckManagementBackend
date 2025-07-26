@@ -1,11 +1,17 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ReportService } from 'src/reports/reports.service';
+import { Roles } from 'src/roles/roles.decorator';
+import { RolesGuard } from 'src/roles/roles.guard';
 import { createSuccess, ErrorException } from 'src/utils/response.handler';
 
 @Controller('reports')
+@UseGuards(JwtAuthGuard, RolesGuard)
+
 export class ReportController {
   constructor(private readonly reportService: ReportService) {}
 
+  @Roles('Admin', 'Staff')
   @Get('driver-wise')
   async getDriverWiseReport() {
     try {
@@ -20,6 +26,7 @@ export class ReportController {
     }
   }
 
+  @Roles('Admin', 'Staff')
   @Get('truck-wise')
   async getTruckWiseReport() {
     try {
@@ -34,6 +41,7 @@ export class ReportController {
     }
   }
 
+  @Roles('Admin', 'Staff')
   @Get('client-wise')
   async getClientWiseReport(@Query('period') period: 'monthly' | 'yearly') {
     try {
