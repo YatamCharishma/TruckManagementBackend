@@ -1,0 +1,423 @@
+openapi: 3.0.3
+info:
+  title: VR Enterprise Backend API
+  version: 1.0.0
+  description: API documentation for managing trucks, drivers, trips, clients, reports, and users.
+
+servers:
+  - url: http://localhost:3000/api
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Truck:
+      type: object
+      properties:
+        truck_uuid:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        capacity:
+          type: number
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+
+    Driver:
+      type: object
+      properties:
+        driver_uuid:
+          type: string
+        name:
+          type: string
+        phone_number:
+          type: string
+        license_number:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        is_active:
+          type: boolean
+
+    Trip:
+      type: object
+      properties:
+        trip_uuid:
+          type: string
+        truck_id:
+          type: number
+        driver_id:
+          type: number
+        client_id:
+          type: number
+        trip_date:
+          type: string
+          format: date
+        start_location:
+          type: string
+        end_location:
+          type: string
+        revenue:
+          type: number
+        expenses:
+          type: number
+        notes:
+          type: string
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+
+    User:
+      type: object
+      properties:
+        user_uuid:
+          type: string
+        team_uuid:
+          type: string
+        user_name:
+          type: string
+        user_email:
+          type: string
+        password_hash:
+          type: string
+        role:
+          type: string
+        is_active:
+          type: boolean
+        created_by:
+          type: string
+
+paths:
+  /trucks:
+    get:
+      summary: Get all trucks
+      security:
+        - bearerAuth: []
+      responses:
+        '200': { description: List of trucks }
+    post:
+      summary: Add a new truck
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Truck'
+      responses:
+        '201': { description: Truck created }
+
+  /trucks/{truck_id}/usage:
+    get:
+      summary: Get usage for a truck
+      parameters:
+        - name: truck_id
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        '200': { description: Truck usage }
+
+  /trucks/available:
+    get:
+      summary: Get available trucks
+      security:
+        - bearerAuth: []
+      responses:
+        '200': { description: Available trucks }
+
+  /drivers:
+    get:
+      summary: Get all drivers
+      security:
+        - bearerAuth: []
+      responses:
+        '200': { description: List of drivers }
+    post:
+      summary: Add a new driver
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Driver'
+      responses:
+        '201': { description: Driver created }
+
+  /drivers/by-phone/{phone}:
+    get:
+      summary: Get driver by phone
+      parameters:
+        - name: phone
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        '200': { description: Driver info }
+
+  /drivers/{id}:
+    delete:
+      summary: Deactivate driver
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        '204': { description: Driver deactivated }
+
+  /drivers/assign:
+    post:
+      summary: Assign driver to trip
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                driver_id:
+                  type: number
+                trip_id:
+                  type: number
+      responses:
+        '200': { description: Driver assigned }
+
+  /trips:
+    get:
+      summary: Get all trips
+      security:
+        - bearerAuth: []
+      responses:
+        '200': { description: List of trips }
+
+  /trips/{id}:
+    put:
+      summary: Update trip
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trip'
+      responses:
+        '200': { description: Trip updated }
+    delete:
+      summary: Deactivate trip
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      security:
+        - bearerAuth: []
+      responses:
+        '204': { description: Trip deactivated }
+
+  /trips/by-client/{id}:
+    get:
+      summary: Get trips by client
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      security:
+        - bearerAuth: []
+      responses:
+        '200': { description: Client trips }
+
+  /trips/by-driver/{id}:
+    get:
+      summary: Get trips by driver
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      security:
+        - bearerAuth: []
+      responses:
+        '200': { description: Driver trips }
+
+  /trips/by-truck/{id}:
+    get:
+      summary: Get trips by truck
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      security:
+        - bearerAuth: []
+      responses:
+        '200': { description: Truck trips }
+
+  /clients:
+    get:
+      summary: Get all clients
+      security:
+        - bearerAuth: []
+      responses:
+        '200': { description: List of clients }
+
+  /clients/by-email/{email}:
+    get:
+      summary: Get client by email
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        '200': { description: Client info }
+
+  /clients/trip-history/{id}:
+    get:
+      summary: Get client trip history
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      security:
+        - bearerAuth: []
+      responses:
+        '200': { description: Trip history }
+
+  /clients/{id}:
+    delete:
+      summary: Deactivate client
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      security:
+        - bearerAuth: []
+      responses:
+        '204': { description: Client deactivated }
+
+  /reports/driver-wise:
+    get:
+      summary: Driver wise report
+      security:
+        - bearerAuth: []
+      responses:
+        '200': { description: Report data }
+
+  /reports/truck-wise:
+    get:
+      summary: Truck wise report
+      security:
+        - bearerAuth: []
+      responses:
+        '200': { description: Report data }
+
+  /reports/client-wise:
+    get:
+      summary: Client wise report
+      parameters:
+        - name: period
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [monthly, yearly]
+      security:
+        - bearerAuth: []
+      responses:
+        '200': { description: Report data }
+
+  /user/all-users-info:
+    get:
+      summary: Get all users
+      security:
+        - bearerAuth: []
+      responses:
+        '200': { description: User list }
+
+  /user/update-user-info:
+    put:
+      summary: Update user info
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200': { description: User updated }
+
+  /user/delete-user-info/{email}:
+    delete:
+      summary: Delete user by email
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        '204': { description: User deleted }
+
+  /user/add-user:
+    post:
+      summary: Add new user
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201': { description: User created }
